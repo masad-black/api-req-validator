@@ -13,6 +13,11 @@ const createUserSchema = {
     password: { type: "string", required: true, trim: true, minLength: 8 },
     isActive: { type: "boolean" },
     images: { type: "array", minItems: 1, maxItems: 5, unique: true },
+    role: {
+      required: true,
+      type: "string",
+      enum: ["admin", "customer", "vendor"],
+    },
   },
 };
 

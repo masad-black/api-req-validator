@@ -1,3 +1,5 @@
-function validateParam(reqSchema, paramSchema) {}
+function validateParam(reqSchema, paramSchema) {
+  const paramErrors = [];
+}
 
 export { validateParam };

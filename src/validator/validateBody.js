@@ -1,3 +1,5 @@
+import validator from "validator";
+
 function validateBody(reqSchema, bodySchema) {
   let bodyErrors = [];
 
@@ -7,19 +9,27 @@ function validateBody(reqSchema, bodySchema) {
       // if required is true then error, and  if false  then it's okay
       if (rules.required) {
         bodyErrors.push(`${field} doesn't exist, according to schema`);
-        // continue;
-      } else {
         continue;
+      } else continue;
+    } else {
+      // checking types
+      if (rules.type && typeof reqSchema[field] !== rules.type) {
+        bodyErrors.push(`${field} type didn't matched, according to schema`);
       }
-    }
-
-    // checking types
-    if (rules.type && typeof reqSchema[field] !== rules.type) {
-      bodyErrors.push(`${field} types didn't matched, according to schema`);
     }
 
     // checking specific rules for {string}
     if (typeof reqSchema[field] === "string") {
+      // enum
+      if (rules.enum) {
+        const check = rules.enum.find((value) => value === reqSchema[field]);
+        if (check === undefined) {
+          bodyErrors.push(
+            `${field} doesn't have deifined values, according to schema`
+          );
+        }
+      }
+
       // triming sides
       if (rules.trim) {
         reqSchema[field] = reqSchema[field].trim();
@@ -29,8 +39,47 @@ function validateBody(reqSchema, bodySchema) {
       if (rules.format) {
         // for email
         if (rules.format === "email") {
-          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-          if (!emailRegex.test(reqSchema[field])) {
+          if (!validator.isEmail(reqSchema[field])) {
+            bodyErrors.push(
+              `${field} formate didn't matched, according to schema`
+            );
+          }
+        }
+        // for url
+        if (rules.format === "url") {
+          if (!validator.isURL(reqSchema[field])) {
+            bodyErrors.push(
+              `${field} formate didn't matched, according to schema`
+            );
+          }
+        }
+        // for date
+        if (rules.format === "date") {
+          if (!validator.isDate(reqSchema[field])) {
+            bodyErrors.push(
+              `${field} pattren didn't matched, according to schema`
+            );
+          }
+        }
+        // for uuid
+        if (rules.format === "uuid") {
+          if (!validator.isUUID(reqSchema[field])) {
+            bodyErrors.push(
+              `${field} pattren didn't matched, according to schema`
+            );
+          }
+        }
+        // for phone no
+        if (rules.format === "phone") {
+          if (!validator.isMobilePhone(reqSchema[field])) {
+            bodyErrors.push(
+              `${field} pattren didn't matched, according to schema`
+            );
+          }
+        }
+        // for credit card
+        if (rules.format === "credit-card") {
+          if (!validator.isCreditCard(reqSchema[field])) {
             bodyErrors.push(
               `${field} pattren didn't matched, according to schema`
             );
