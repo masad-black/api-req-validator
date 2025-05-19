@@ -1,8 +1,16 @@
-function createSchema({ body = {}, param = {}, query = {} }) {
+const defaultOpt = {
+  strict: false,
+};
+
+function createSchema(
+  { body = {}, param = {}, query = {} },
+  options = { ...defaultOpt }
+) {
   return {
     body,
     param,
     query,
+    options,
   };
 }
 
